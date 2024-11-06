@@ -17,3 +17,9 @@ scrape_configs:
           job: "system_logs"
           host: "server1"
           __path__: /var/log/myapp.log  # Path to the logs
+    pipeline_stages:
+      - json:
+          expressions:
+            observed_timestamp_rfc3339: "observed_timestamp_rfc3339"
+            instrumentation_scope: "instrumentation_scope"
+            severity_text: "severity_text"
