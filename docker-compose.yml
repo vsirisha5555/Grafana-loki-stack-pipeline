@@ -1,0 +1,30 @@
+services:
+  loki:
+    image: grafana/loki:2.5.0
+    ports:
+      - "3100:3100"
+    volumes:
+      - /home/ubuntu/loki-config.yml:/etc/loki/local-config.yml  # Mount your Loki config
+    command: -config.file=/etc/loki/local-config.yml  # Ensure Loki uses the correct config file
+
+  promtail:
+    image: grafana/promtail:2.5.0
+    volumes:
+      - /home/ubuntu/promtail-config.yml:/etc/promtail/promtail-config.yml  # Mount your Promtail config
+      - /var/log/myapp.log:/var/log/myapp.log  # Mount only myapp.log to the container
+    command: -config.file=/etc/promtail/promtail-config.yml  # Ensure Promtail uses the correct config file
+    depends_on:
+      - loki  # Ensure Promtail starts after Loki
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"  # Expose Grafana on port 3000
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - loki  # Ensure Grafana starts after Loki
+
+
+
